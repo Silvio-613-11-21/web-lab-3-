@@ -14,7 +14,8 @@ const upload = multer({
 
 router.post('/readyorders',upload.single('photo'), ReadyOrdersController.createReadyOrder);
 router.get('/readyordersall', ReadyOrdersController.getAllReadyOrders);
-router.delete('/readyorders/:id', ReadyOrdersController.deleteReadyOrder);
-router.get('/readyorders/:description', ReadyOrdersController.findReadyOrder);
+router.delete('/readyordersdel/:id', ReadyOrdersController.deleteReadyOrder);
+router.post('/readyordersfind', ReadyOrdersController.findReadyOrder);
+router.get('/readyorder/:id', ReadyOrdersController.getOneReadyOrder);
 
 module.exports = router;

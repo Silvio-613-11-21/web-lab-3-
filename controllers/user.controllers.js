@@ -1,6 +1,7 @@
 const db = require("../config/db");
 const client = require("pg/lib/query");
 const argon2 = require('argon2');
+const validator = require("validator");
 
 async function hashPassword (password) {
     const hash = await argon2.hash(password);
@@ -12,14 +13,37 @@ async function verifyPassword (hash, password){
     return isMatch;
 }
 
+function validatePhone(phoneNumber) {
+    const cleanedNumber = phoneNumber.replace(/\D/g, '');
+
+    // Проверяем российские номера в форматах:
+    // +7XXXXXXXXXX (11 цифр) или 8XXXXXXXXXX (11 цифр) или XXXXXXXXXX (10 цифр)
+    const isValid = /^(8|\+7|7)?\d{10}$/.test(cleanedNumber);
+
+    return isValid;
+}
+
 class UserControllers{
 
     async createUser(req, res){
-        const {name, telephone, mail, password} = req.body;
-        const hash = await hashPassword(password);
+        const {name, telephone, mail, password} = req.body
+        let hash
+        const existingNumbers = await db.query('SELECT telephon FROM client WHERE telephon = $1', [telephone]);
+
+        if (validator.isEmail(mail)){
+            if (validatePhone(telephone) ){
+                if (!(existingNumbers.rows.length > 0)){
+                    hash = await hashPassword(password);
+                }
+                else return res.json({ error: "Телефон уже зарегистрирован"});
+            }
+            else return res.json({ error: "Ошибка в формате телефона (только Ру-номера)"});
+        }
+        else return res.json({ error: "Ошибка в почте"});
+
 
         const newClient = await db.query('INSERT INTO client (name, telephon, mail, password) values ($1, $2, $3, $4)', [name, telephone, mail, hash]);
-        res.json(newClient.rows[0]);
+        res.json({ "res" : "Пользователь успешно зарегистрирован"});
     }
 
     async getOneUser(req, res){

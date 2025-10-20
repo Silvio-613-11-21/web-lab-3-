@@ -36,6 +36,19 @@ class ReadyOrdersControllers{
 
     }
 
+    async getOneReadyOrder(req, res){
+        try{
+            const {id} = req.params;
+
+            const ReadyOrder = await db.query ('SELECT * FROM readyorders WHERE id = $1', [id]);
+            res.json(ReadyOrder.rows[0]);
+        }
+        catch(error) {
+            console.error("Error", error);
+            res.status(400).send({error: error});
+        }
+    }
+
     async deleteReadyOrder(req, res){
         try{
             const {id} = req.params;
@@ -50,7 +63,7 @@ class ReadyOrdersControllers{
 
     async findReadyOrder(req, res){
         try {
-            const {description} = req.params;
+            const {description} = req.body;
 
             // Проверяем, что параметр передан
             if (!description) {
