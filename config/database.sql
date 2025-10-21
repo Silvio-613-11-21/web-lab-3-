@@ -7,7 +7,8 @@ create Table Client(
 );
 
 create TABLE ReadyOrders(
-    id SERIAL primary key ,
+    id SERIAL primary key,
+    category VARCHAR(255),
     title VARCHAR(255),
     price integer,
     info VARCHAR,
@@ -26,29 +27,11 @@ create TABLE ReadyOrdersStories(
     foreign key (readyorder_id) references ReadyOrders(id)
 );
 
-
--------
-
-create TABLE Materials(
-    id SERIAL primary key,
-
-    title VARCHAR(255),
-    info VARCHAR(255),
-    price INTEGER,
-    photo BYTEA
-);
-
-create TABLE Orders(
-    id SERIAL primary key,
-
+create TABLE feedback(
     client_id integer,
     foreign key (client_id) references Client (id),
 
-    material_id integer,
-    foreign key (material_id) references Materials (id),
-
-    height INTEGER,
-    width INTEGER,
-    quantity INTEGER
+    message VARCHAR(255)
 );
+-------
 

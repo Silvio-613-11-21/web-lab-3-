@@ -6,7 +6,7 @@ class ReadyOrdersControllers{
 
     async createReadyOrder(req, res){
         try{
-            const {title , price, info} = req.body;
+            const { category, title , price, info} = req.body;
             const photoFile = req.file;
 
             let photoBuffer = null;
@@ -14,7 +14,7 @@ class ReadyOrdersControllers{
                 photoBuffer = photoFile.buffer;
             }
 
-            const newReadyOrder = await db.query ('INSERT INTO readyorders (title, price, info, photo) VALUES ($1, $2, $3, $4)', [title, price, info, photoBuffer]);
+            const newReadyOrder = await db.query ('INSERT INTO readyorders (category, title, price, info, photo) VALUES ($1, $2, $3, $4, $5)', [ category, title, price, info, photoBuffer]);
 
         }
         catch(error) {
